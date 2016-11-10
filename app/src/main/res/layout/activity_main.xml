@@ -1,51 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="match_parent">
+
+    <EditText
+        android:id="@+id/edit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 
     <com.paulyung.laybellayout.LaybelLayout
+        android:id="@+id/laybel_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@android:color/darker_gray"
-        android:paddingTop="100dp"
-        android:paddingLeft="20dp"
-        android:paddingRight="30dp"
-        android:paddingBottom="30dp"
-        app:line_padding="10">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="100dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="20dp"
-            android:ellipsize="end"
-            android:singleLine="true"
-            android:text="1234gfggfgfgfgfg56"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="100dp"
-            android:text="综合咨询"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:singleLine="true"
-            android:text="2132132131dfdfdffd2"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="12321323"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="aaaaaaaaaa"/>
-    </com.paulyung.laybellayout.LaybelLayout>
+        android:layout_below="@id/edit"
+        android:layout_centerHorizontal="true"
+        android:padding="5dp"
+        app:line_padding="5"/>
 </RelativeLayout>
