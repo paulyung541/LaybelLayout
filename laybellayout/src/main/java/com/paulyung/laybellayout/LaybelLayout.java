@@ -79,11 +79,11 @@ public class LaybelLayout extends ViewGroup {
         int heightMode = MeasureSpec.getMode(heightMeasureSpec);
 
         if (widthMode != MeasureSpec.EXACTLY && heightMode != MeasureSpec.EXACTLY)
-            setMeasuredDimension(resolveSize(minWidth, widthMeasureSpec), resolveSize(minHeight, heightMeasureSpec));
+            setMeasuredDimension(minWidth, minHeight);
         else if (widthMode != MeasureSpec.EXACTLY)
-            setMeasuredDimension(resolveSize(minWidth, widthMeasureSpec), getDefaultSize(getSuggestedMinimumHeight(), heightMeasureSpec));
+            setMeasuredDimension(minWidth, getDefaultSize(getSuggestedMinimumHeight(), heightMeasureSpec));
         else if (heightMode != MeasureSpec.EXACTLY)
-            setMeasuredDimension(getDefaultSize(getSuggestedMinimumWidth(), widthMeasureSpec), resolveSize(minHeight, heightMeasureSpec));
+            setMeasuredDimension(getDefaultSize(getSuggestedMinimumWidth(), widthMeasureSpec), minHeight);
     }
 
     private void writeViewMsg() {
@@ -95,6 +95,7 @@ public class LaybelLayout extends ViewGroup {
         int bottom = 0;
         int freeWidth = getMeasuredWidth() - getPaddingLeft() - getPaddingRight();//横向剩余空间
         boolean isFirst = true;//是否是某一行的第一个
+        int tmpWidth = 0;
 
         for (int i = 0; i < mNoGoneChildren.size(); i++) {
             View view = mNoGoneChildren.get(i);
@@ -113,10 +114,14 @@ public class LaybelLayout extends ViewGroup {
             if (isFirst) {
                 left = getPaddingLeft() + layoutParams.leftMargin;
                 isFirst = false;
+                if (tmpWidth > minWidth)
+                    minWidth = tmpWidth;
+                tmpWidth = childWidth;
             } else {
                 View prView = mNoGoneChildren.get(i - 1);
                 MarginLayoutParams ll = (MarginLayoutParams) prView.getLayoutParams();
                 left += prView.getMeasuredWidth() + ll.rightMargin + layoutParams.leftMargin;
+                tmpWidth += childWidth;
             }
             top = getPaddingTop() + lineHeightSum + mLinePadding + layoutParams.topMargin;
             right = left + view.getMeasuredWidth();
@@ -128,7 +133,6 @@ public class LaybelLayout extends ViewGroup {
             if (tmpHeight > lineHeight)//选出一行当中占用高度最多的作为行高
                 lineHeight = tmpHeight;
             freeWidth -= childWidth;
-            minWidth += childWidth;
 
             if (mChildrenMsg.containsKey(view))
                 mChildrenMsg.remove(view);

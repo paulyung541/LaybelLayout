@@ -16,6 +16,5 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/edit"
         android:layout_centerHorizontal="true"
-        android:padding="5dp"
         app:line_padding="5"/>
 </RelativeLayout>
