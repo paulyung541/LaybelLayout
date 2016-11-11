@@ -6,6 +6,12 @@
 
 ![image](https://github.com/paulyung541/LaybelLayout/blob/master/demo.jpg)
 
+##添加依赖
+```groovy
+compile 'com.paulyung:laybellayout:1.0.0'
+```
+
+
 自定义属性：
 ```xml
 app:line_padding="Integer"
