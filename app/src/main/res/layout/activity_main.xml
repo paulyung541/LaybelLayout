@@ -1,20 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <EditText
-        android:id="@+id/edit"
+    <Button
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
-    <com.paulyung.laybellayout.LaybelLayout
-        android:id="@+id/laybel_layout"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/edit"
-        android:layout_centerHorizontal="true"
-        app:line_padding="5"/>
-</RelativeLayout>
+        android:text="Default TextView"
+        android:onClick="click1"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Custom TextView background"
+        android:onClick="click2"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Image"
+        android:onClick="click3"/>
+</LinearLayout>

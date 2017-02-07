@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:id="@+id/activity_custom_background_text_view"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.paulyung.demo.CustomBackgroundTextViewActivity">
+
+    <com.paulyung.laybellayout.LaybelLayout
+        android:id="@+id/laybelLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        app:line_padding="5"
+        app:text_background="@drawable/custom_back"/>
+
+</RelativeLayout>

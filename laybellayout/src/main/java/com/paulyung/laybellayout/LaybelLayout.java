@@ -5,8 +5,10 @@ import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,14 +17,29 @@ import java.util.Set;
 /**
  * Created by yang on 2016/11/7.
  * paulyung@outlook.com
- * 一个标签布局
+ * a auto new line layout
+ *
+ * @attr int android.R.styleable#LaybelLayout_line_padding
+ * @attr int android.R.styleable#LaybelLayout_child_margin
+ * @attr ref android.R.styleable#LaybelLayout_text_background
+ * <p>
+ * the default child view is TextView
  */
 
 public class LaybelLayout extends ViewGroup {
-    private List<View> mNoGoneChildren;
+    private static final String TAG = "LaybelLayout";
+
+    private List<View> mChildView;
     private Map<View, ChildLayoutMsg> mChildrenMsg;
     private int mLinePadding;//行内上下边距
     private int minWidth, minHeight;//本控件的最小宽高
+
+    //------------ child view msg ---------------
+    private int childMargin;
+    private int textBackground;
+
+    //------------ child view data --------------
+    private Adapter mAdapter;
 
     public LaybelLayout(Context context) {
         this(context, null);
@@ -34,7 +51,7 @@ public class LaybelLayout extends ViewGroup {
 
     public LaybelLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        mNoGoneChildren = new ArrayList<>();
+        mChildView = new ArrayList<>();
         mChildrenMsg = new HashMap<>();
         initAttr(attrs);
     }
@@ -42,7 +59,47 @@ public class LaybelLayout extends ViewGroup {
     private void initAttr(AttributeSet attrs) {
         TypedArray t = getContext().obtainStyledAttributes(attrs, R.styleable.LaybelLayout);
         mLinePadding = dip2px(t.getInt(R.styleable.LaybelLayout_line_padding, 0));
+        childMargin = dip2px(t.getInt(R.styleable.LaybelLayout_child_margin, 0));
+        textBackground = t.getResourceId(R.styleable.LaybelLayout_text_background, R.drawable.background);
         t.recycle();
+    }
+
+    /**
+     * according to datas generate the child views
+     */
+    private void prepareView() {
+        if (mAdapter.getView() == null) {
+            generateDefaultView();
+        } else {
+            for (int i = 0; i < mAdapter.getCount(); i++) {
+                View child = mAdapter.getView();
+                ViewGroup.MarginLayoutParams params = (MarginLayoutParams) child.getLayoutParams();
+                if (params == null) {
+                    params = (MarginLayoutParams) generateDefaultLayoutParams();
+                }
+                mAdapter.onDataSet(child, mAdapter.getItem(i));
+                addView(child, params);
+            }
+        }
+    }
+
+    private void generateDefaultView() {
+        for (int i = 0; i < mAdapter.getCount(); ++i) {
+            TextView child = new TextView(getContext());
+            ViewGroup.MarginLayoutParams params = (MarginLayoutParams) generateDefaultLayoutParams();
+            params.leftMargin = dip2px(5);
+            params.rightMargin = dip2px(5);
+            child.setBackgroundDrawable(getContext().getResources().getDrawable(textBackground));
+            child.setText(mAdapter.getItem(i));
+            mAdapter.onDataSet(child, mAdapter.getItem(i));
+            addView(child, params);
+        }
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        prepareView();
     }
 
     @Override
@@ -53,26 +110,24 @@ public class LaybelLayout extends ViewGroup {
         int count = getChildCount();
         for (int i = 0; i < count; ++i) {
             View child = getChildAt(i);
-            if (child.getVisibility() != GONE) {
-                measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
-                MarginLayoutParams layoutParams = (MarginLayoutParams) child.getLayoutParams();
-                //如果单个View和本控件的padding加起来超过本控件的宽度，则让它的宽度 <= 本控件宽度 - Padding - margin
-                int defSize = getPaddingLeft() + layoutParams.leftMargin
-                        + child.getMeasuredWidth() + layoutParams.rightMargin + getPaddingRight();
-                if (defSize > getMeasuredWidth()) {
-                    defSize = getMeasuredWidth() - layoutParams.leftMargin
-                            - layoutParams.rightMargin - getPaddingLeft() - getPaddingRight();
-                    int widthSpec = MeasureSpec.makeMeasureSpec(defSize, MeasureSpec.AT_MOST);
+            measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
+            MarginLayoutParams layoutParams = (MarginLayoutParams) child.getLayoutParams();
+            //如果单个View和本控件的padding加起来超过本控件的宽度，则让它的宽度 <= 本控件宽度 - Padding - margin
+            int defSize = getPaddingLeft() + layoutParams.leftMargin
+                    + child.getMeasuredWidth() + layoutParams.rightMargin + getPaddingRight();
+            if (defSize > getMeasuredWidth()) {
+                defSize = getMeasuredWidth() - layoutParams.leftMargin
+                        - layoutParams.rightMargin - getPaddingLeft() - getPaddingRight();
+                int widthSpec = MeasureSpec.makeMeasureSpec(defSize, MeasureSpec.AT_MOST);
 
-                    //根据measureChildWithMargins里面获取高度 Spec 的方式，重新获取到高度的Spec
-                    int heightSpec = getChildMeasureSpec(heightMeasureSpec,
-                            getPaddingTop() + getPaddingBottom() + layoutParams.topMargin
-                                    + layoutParams.bottomMargin, layoutParams.height);
-                    child.measure(widthSpec, heightSpec);
-                }
-                if (!mNoGoneChildren.contains(child))
-                    mNoGoneChildren.add(child);
+                //根据measureChildWithMargins里面获取高度 Spec 的方式，重新获取到高度的Spec
+                int heightSpec = getChildMeasureSpec(heightMeasureSpec,
+                        getPaddingTop() + getPaddingBottom() + layoutParams.topMargin
+                                + layoutParams.bottomMargin, layoutParams.height);
+                child.measure(widthSpec, heightSpec);
             }
+            if (!mChildView.contains(child))
+                mChildView.add(child);
         }
         writeViewMsg();
         int widthMode = MeasureSpec.getMode(widthMeasureSpec);
@@ -97,8 +152,8 @@ public class LaybelLayout extends ViewGroup {
         boolean isFirst = true;//是否是某一行的第一个
         int tmpWidth = 0;
 
-        for (int i = 0; i < mNoGoneChildren.size(); i++) {
-            View view = mNoGoneChildren.get(i);
+        for (int i = 0; i < mChildView.size(); i++) {
+            View view = mChildView.get(i);
             MarginLayoutParams layoutParams = (MarginLayoutParams) view.getLayoutParams();
 
             //判断剩余空间是否够用，如果不够，则进入下一行
@@ -118,7 +173,7 @@ public class LaybelLayout extends ViewGroup {
                     minWidth = tmpWidth;
                 tmpWidth = childWidth;
             } else {
-                View prView = mNoGoneChildren.get(i - 1);
+                View prView = mChildView.get(i - 1);
                 MarginLayoutParams ll = (MarginLayoutParams) prView.getLayoutParams();
                 left += prView.getMeasuredWidth() + ll.rightMargin + layoutParams.leftMargin;
                 tmpWidth += childWidth;
@@ -187,5 +242,51 @@ public class LaybelLayout extends ViewGroup {
 
     public void setLinePadding(int paddingSize) {
         mLinePadding = dip2px(paddingSize);
+    }
+
+    public void setAdapter(Adapter adapter) {
+        mAdapter = adapter;
+    }
+
+    public static class Adapter {
+        private List<String> mDatas;
+
+        public Adapter(List<String> datas) {
+            mDatas = datas;
+        }
+
+        public Adapter(String... datas) {
+            mDatas = Arrays.asList(datas);
+        }
+
+        public List<String> getDatas() {
+            return mDatas;
+        }
+
+        public int getCount() {
+            if (mDatas == null)
+                return 0;
+            return mDatas.size();
+        }
+
+        public String getItem(int position) {
+            if (mDatas == null)
+                return "";
+            return mDatas.get(position);
+        }
+
+        /**
+         * if you want to use custom child view, you can overide this method,
+         * otherwise,the default view can be set
+         *
+         * @return your custom view
+         */
+        public View getView() {
+            return null;
+        }
+
+        //called when data set by LaybelLayout
+        public void onDataSet(View v, String data) {
+        }
     }
 }
