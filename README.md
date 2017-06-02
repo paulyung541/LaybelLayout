@@ -14,7 +14,7 @@ maven { url 'https://jitpack.io' }
 ```
 在项目主Module里添加如下：
 ```groovy
-compile 'com.paulyung:laybellayout:v1.2.0'
+compile 'com.github.paulyung541:LaybelLayout:v1.2.0'
 ```
 
 
