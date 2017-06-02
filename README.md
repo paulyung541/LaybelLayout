@@ -14,7 +14,7 @@ maven { url 'https://jitpack.io' }
 ```
 在项目主Module里添加如下：
 ```groovy
-compile 'com.paulyung:laybellayout:v1.1.0'
+compile 'com.paulyung:laybellayout:v1.2.0'
 ```
 
 
@@ -59,6 +59,15 @@ laybelLayout.setAdapter(new LaybelLayout.Adapter(Content.images) {
     @Override
     public void onDataSet(View v, String data) {
         Glide.with(ImageActivity.this).load(data).into((ImageView) v);
+    }
+});
+```
+添加点击事件
+```java
+laybelLayout.setOnItemClickListener(new LaybelLayout.OnItemClickListener() {
+    @Override
+    public void onItemClick(int p) {
+        Toast.makeText(DefaultTextViewActivity.this, Content.content[p], Toast.LENGTH_SHORT).show();
     }
 });
 ```

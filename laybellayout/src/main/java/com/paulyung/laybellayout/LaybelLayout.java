@@ -26,13 +26,15 @@ import java.util.Set;
  * the default child view is TextView
  */
 
-public class LaybelLayout extends ViewGroup {
+public class LaybelLayout extends ViewGroup implements View.OnClickListener{
     private static final String TAG = "LaybelLayout";
 
     private List<View> mChildView;
     private Map<View, ChildLayoutMsg> mChildrenMsg;
     private int mLinePadding;//行内上下边距
     private int minWidth, minHeight;//本控件的最小宽高
+
+    private OnItemClickListener onItemClickListener;
 
     //------------ child view msg ---------------
     private int childMargin;
@@ -81,6 +83,10 @@ public class LaybelLayout extends ViewGroup {
                 addView(child, params);
             }
         }
+        if (onItemClickListener != null)
+            for (int i = 0; i < getChildCount(); i++) {
+                getChildAt(i).setOnClickListener(this);
+            }
     }
 
     private void generateDefaultView() {
@@ -226,6 +232,13 @@ public class LaybelLayout extends ViewGroup {
         return (int) (dpValue * scale + 0.5f);
     }
 
+    @Override
+    public void onClick(View v) {
+        if (onItemClickListener != null) {
+            onItemClickListener.onItemClick(mChildView.indexOf(v));
+        }
+    }
+
     private static final class ChildLayoutMsg {
         ChildLayoutMsg(int l, int t, int r, int b) {
             left = l;
@@ -288,5 +301,13 @@ public class LaybelLayout extends ViewGroup {
         //called when data set by LaybelLayout
         public void onDataSet(View v, String data) {
         }
+    }
+
+    public void setOnItemClickListener(OnItemClickListener l) {
+        onItemClickListener = l;
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(int p);
     }
 }
