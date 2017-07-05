@@ -7,12 +7,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.paulyung.demo.DefaultTextViewActivity">
-
-    <com.paulyung.laybellayout.LaybelLayout
-        android:id="@+id/laybelLayout"
-        android:layout_marginLeft="5dp"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:line_padding="5"/>
+        android:layout_height="match_parent">
+        <com.paulyung.laybellayout.LaybelLayout
+            android:id="@+id/laybelLayout"
+            android:layout_marginLeft="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:line_padding="5"/>
+    </ScrollView>
 
 </RelativeLayout>

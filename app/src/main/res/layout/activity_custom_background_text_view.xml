@@ -8,12 +8,16 @@
     android:layout_height="match_parent"
     tools:context="com.paulyung.demo.CustomBackgroundTextViewActivity">
 
-    <com.paulyung.laybellayout.LaybelLayout
-        android:id="@+id/laybelLayout"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="5dp"
-        app:line_padding="5"
-        app:text_background="@drawable/custom_back"/>
+        android:layout_height="match_parent">
+        <com.paulyung.laybellayout.LaybelLayout
+            android:id="@+id/laybelLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            app:line_padding="5"
+            app:text_background="@drawable/custom_back"/>
+    </ScrollView>
 
 </RelativeLayout>

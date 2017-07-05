@@ -26,7 +26,7 @@ import java.util.Set;
  * the default child view is TextView
  */
 
-public class LaybelLayout extends ViewGroup implements View.OnClickListener{
+public class LaybelLayout extends ViewGroup implements View.OnClickListener {
     private static final String TAG = "LaybelLayout";
 
     private List<View> mChildView;
@@ -116,7 +116,8 @@ public class LaybelLayout extends ViewGroup implements View.OnClickListener{
         int count = getChildCount();
         for (int i = 0; i < count; ++i) {
             View child = getChildAt(i);
-            measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
+            measureChild(child, widthMeasureSpec, heightMeasureSpec);
+//            measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0); 这里置为0时候，和 measureChild 是一回事
             MarginLayoutParams layoutParams = (MarginLayoutParams) child.getLayoutParams();
             //如果单个View和本控件的padding加起来超过本控件的宽度，则让它的宽度 <= 本控件宽度 - Padding - margin
             int defSize = getPaddingLeft() + layoutParams.leftMargin
@@ -124,13 +125,8 @@ public class LaybelLayout extends ViewGroup implements View.OnClickListener{
             if (defSize > getMeasuredWidth()) {
                 defSize = getMeasuredWidth() - layoutParams.leftMargin
                         - layoutParams.rightMargin - getPaddingLeft() - getPaddingRight();
-                int widthSpec = MeasureSpec.makeMeasureSpec(defSize, MeasureSpec.AT_MOST);
-
-                //根据measureChildWithMargins里面获取高度 Spec 的方式，重新获取到高度的Spec
-                int heightSpec = getChildMeasureSpec(heightMeasureSpec,
-                        getPaddingTop() + getPaddingBottom() + layoutParams.topMargin
-                                + layoutParams.bottomMargin, layoutParams.height);
-                child.measure(widthSpec, heightSpec);
+                layoutParams.width = defSize;
+                measureChild(child, widthMeasureSpec, heightMeasureSpec);
             }
             if (!mChildView.contains(child))
                 mChildView.add(child);
@@ -140,7 +136,7 @@ public class LaybelLayout extends ViewGroup implements View.OnClickListener{
         int heightMode = MeasureSpec.getMode(heightMeasureSpec);
 
         if (widthMode != MeasureSpec.EXACTLY && heightMode != MeasureSpec.EXACTLY)
-            setMeasuredDimension(minWidth, minHeight);
+            super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         else if (widthMode != MeasureSpec.EXACTLY)
             setMeasuredDimension(minWidth, getDefaultSize(getSuggestedMinimumHeight(), heightMeasureSpec));
         else if (heightMode != MeasureSpec.EXACTLY)

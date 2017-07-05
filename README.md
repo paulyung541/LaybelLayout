@@ -24,7 +24,7 @@ app:line_padding="Integer" <!-- 表示每一行的上下内边距 -->
 app:text_background="reference" <!-- 表示TextView的自定义背景 -->
 ```
 
-##示例
+## 示例
 在xml里面添加该控件
 ```xml
 <com.paulyung.laybellayout.LaybelLayout
@@ -37,7 +37,7 @@ app:text_background="reference" <!-- 表示TextView的自定义背景 -->
 ```
 
 设置Adapter提供数据<br>
-**note:**这个Adapter可不是ListView的Adapter哦，是自己定义的，不过用法差不多
+**Note：** 这个Adapter可不是ListView的Adapter哦，是自己定义的，不过用法差不多
 ```java
 laybelLayout = (LaybelLayout) findViewById(R.id.laybel_layout);
 laybelLayout.setAdapter(new LaybelLayout.Adapter(Content.content));
